@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Test Agent IA</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; }
+    textarea { width: 100%; height: 120px; padding: 10px; }
+    button { margin-top: 10px; padding: 10px 16px; }
+    .box { border: 1px solid #ccc; padding: 12px; margin-top: 16px; }
+    .label { font-weight: bold; }
+    pre { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+
+<h2>Tester l’agent IA</h2>
+
+<textarea id="msg" placeholder="Écris un message client ici..."></textarea>
+<br />
+<button onclick="tester()">Tester</button>
+
+<div id="resultat" class="box" style="display:none;">
+  <div><span class="label">Intent :</span> <span id="intent"></span></div>
+  <div><span class="label">Urgence :</span> <span id="urgency"></span></div>
+  <div><span class="label">Escalade humaine :</span> <span id="need_human"></span></div>
+  <div class="label">Réponse proposée :</div>
+  <pre id="reply"></pre>
+</div>
+
+<script>
+const WEBHOOK_URL = "https://n8n-0ldj.onrender.com/webhook-test/agent-universal-v1";
+
+async function tester() {
+  const message = document.getElementById("msg").value.trim();
+  if (!message) return alert("Écris un message");
+
+  const res = await fetch(WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("intent").textContent = data.intent;
+  document.getElementById("urgency").textContent = data.urgency;
+  document.getElementById("need_human").textContent = data.need_human;
+  document.getElementById("reply").textContent = data.reply;
+
+  document.getElementById("resultat").style.display = "block";
+}
+</script>
+
+</body>
+</html>
